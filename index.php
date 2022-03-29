@@ -28,7 +28,7 @@ $password = '123123';
 $dbh = new PDO($dsn, $user, $password);
 
 print_r($dbh);
-echo "qweqew";
+
 ?>
 <main>
     

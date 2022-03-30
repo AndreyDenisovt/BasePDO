@@ -27,6 +27,11 @@ $password = '123123';
 
 $dbh = new PDO($dsn, $user, $password);
 
+/* create new project\site(table)
+* CREATE TABLE `testDB`.`klient-project-name` ( `id` INT NOT NULL AUTO_INCREMENT , `site-name` TINYTEXT NOT NULL , `site-login` TINYTEXT NOT NULL , `site-password` TINYTEXT NOT NULL , `ftp-host` TINYTEXT NOT NULL , `ftp-login` TINYTEXT NOT NULL , `ftp-password` TINYTEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+*/
+
+
 print_r($dbh);
 
 ?>

@@ -33,6 +33,12 @@ $opt = [
 
 $dbh = new PDO($dsn, $user, $password,$opt);
 
+$show_all_tables = function ($dbh){
+    $query_ST = "SHOW TABLES";
+    $sth = $dbh->prepare($query_ST);
+    $sth->execute();
+    return $sth->fetch(PDO::FETCH_ASSOC);
+};
 /* 
 * create new project\site(table)
 * $query_CT = "CREATE TABLE `testDB`.`klient-project-name` ( `id` INT NOT NULL AUTO_INCREMENT , `site-name` VARCHAR(255) , `site-login` TINYTEXT NOT NULL , `site-password` TINYTEXT NOT NULL , `ftp-host` TINYTEXT NOT NULL , `ftp-login` TINYTEXT NOT NULL , `ftp-password` TINYTEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB";
@@ -46,12 +52,15 @@ $sth = $dbh->prepare($query);
 $sth->execute();
 */
 
-$query_TR = "SELECT * FROM `klient_name`";
+$query_II = "INSERT INTO `klient-project-name`( `site-name`, `site-login`, `site-password`, `ftp-host`, `ftp-login`, `ftp-password`) VALUES ('[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]')";
+
+$query_TR = "SELECT * FROM `klient-project-name`";
 
 $sth = $dbh->prepare($query_TR);
 
 $sth->execute();
 $data = $sth->fetchAll();
+
 
 
 echo "<pre>";
@@ -62,52 +71,55 @@ echo "</pre>"
 <main>
     
 <div class="container">
-    <div class="col-md-6 bg-info">-</div>
+    <div class="row">
+        <div class="col-md-3 bg-info">
+            <?php
+                foreach($show_all_tables($dbh) as $name){
+                        echo "<p>".$name."</p>";
+                }
+            ?>
+        </div>     
     <?php
     if ($data > 0){       
     ?>
-    <div class="row">
-        <table class="table table-striped table-bordered">
-            <tr>
-        <?php
-
-            foreach($data[0] as $k=>$v):?>
-                <th>
-                    <?php
-                    echo $k;
-                    ?>
-                </th>
-        
-        <?php
-        endforeach;
-        ?>
-        </tr>
-        
-        <?php
-            foreach($data as $array){?>
-            <tr>
-               <?php 
-                foreach($array as $value){?>        
-                <td>
-                    <?php
-                    echo $value;
-                    ?>
-                </td>
-        
+        <div class="col-md-9">
+            <table class="table table-striped table-bordered">
+                <tr>
                 <?php
+                    foreach($data[0] as $k=>$v):?>
+                        <th>
+                            <?php
+                            echo $k;
+                            ?>
+                        </th>            
+                <?php
+                    endforeach;?>
+                </tr>
+                
+                <?php
+                foreach($data as $array){?>
+                <tr>
+                <?php 
+                    foreach($array as $value){?>        
+                    <td>
+                        <?php
+                        echo $value;
+                        ?>
+                    </td>
+            
+                    <?php
+                    }
+                    ?>
+                </tr>
+                <?php                
                 }
-                ?>
-            </tr>
-            <?php                
-            }
-            ?>  
-        
-       </table>
-
+                ?>          
+            </table>
+        </div>
+        <?php
+        }
+        ?>
     </div>
-    <?php
-    }
-    ?>
 </div>
 
 </main>

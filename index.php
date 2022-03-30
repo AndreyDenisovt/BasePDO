@@ -21,27 +21,94 @@
 // header('Content-type: text/html; charset=utf-8');
 
 
-$dsn = 'mysql:dbname=testDB;host=localhost';
+$dsn = 'mysql:dbname=testDB;host=localhost;charset=utf8';
 $user = 'test_user';
 $password = '123123';
 
-$dbh = new PDO($dsn, $user, $password);
+$opt = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
 
-/* create new project\site(table)
-* CREATE TABLE `testDB`.`klient-project-name` ( `id` INT NOT NULL AUTO_INCREMENT , `site-name` TINYTEXT NOT NULL , `site-login` TINYTEXT NOT NULL , `site-password` TINYTEXT NOT NULL , `ftp-host` TINYTEXT NOT NULL , `ftp-login` TINYTEXT NOT NULL , `ftp-password` TINYTEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+$dbh = new PDO($dsn, $user, $password,$opt);
+
+/* 
+* create new project\site(table)
+* $query_CT = "CREATE TABLE `testDB`.`klient-project-name` ( `id` INT NOT NULL AUTO_INCREMENT , `site-name` VARCHAR(255) , `site-login` TINYTEXT NOT NULL , `site-password` TINYTEXT NOT NULL , `ftp-host` TINYTEXT NOT NULL , `ftp-login` TINYTEXT NOT NULL , `ftp-password` TINYTEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB";
+* $query_II = "INSERT INTO `klient-project-name`( `site-name`, `site-login`, `site-password`, `ftp-host`, `ftp-login`, `ftp-password`) VALUES ('[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]')";
+* show all project
+* $query_ST = "SHOW TABLES";
+
+
+
+$sth = $dbh->prepare($query);
+$sth->execute();
 */
 
+$query_TR = "SELECT * FROM `klient_name`";
 
-print_r($dbh);
+$sth = $dbh->prepare($query_TR);
 
+$sth->execute();
+$data = $sth->fetchAll();
+
+
+echo "<pre>";
+//print_r($data);
+echo "</pre>"
+/******/
 ?>
 <main>
     
-    
 <div class="container">
     <div class="col-md-6 bg-info">-</div>
-</div>
+    <?php
+    if ($data > 0){       
+    ?>
+    <div class="row">
+        <table class="table table-striped table-bordered">
+            <tr>
+        <?php
 
+            foreach($data[0] as $k=>$v):?>
+                <th>
+                    <?php
+                    echo $k;
+                    ?>
+                </th>
+        
+        <?php
+        endforeach;
+        ?>
+        </tr>
+        
+        <?php
+            foreach($data as $array){?>
+            <tr>
+               <?php 
+                foreach($array as $value){?>        
+                <td>
+                    <?php
+                    echo $value;
+                    ?>
+                </td>
+        
+                <?php
+                }
+                ?>
+            </tr>
+            <?php                
+            }
+            ?>  
+        
+       </table>
+
+    </div>
+    <?php
+    }
+    ?>
+</div>
 
 </main>
 

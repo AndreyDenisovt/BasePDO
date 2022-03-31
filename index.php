@@ -45,15 +45,15 @@ $show_all_names = function ($dbh){
 $show_names_pass = $show_all_names($dbh);
 /* 
 * create new project\site(table)
-* $query_CT = "CREATE TABLE `testDB`.`klients-projects` ( `id` INT NOT NULL AUTO_INCREMENT , `site-name` VARCHAR(255) , `csm-adress` VARCHAR(255) , `site-login` VARCHAR(255)  , `site-password` VARCHAR(255)  , `ftp-host` VARCHAR(255)  , `ftp-login` VARCHAR(255)  , `ftp-password` VARCHAR(255)  ,`db-name` VARCHAR(255), `db-login` VARCHAR(255) ,`db-password` VARCHAR(255) ,`more-info` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB";
-* $query_II = "INSERT INTO `klients-projects`( `site-name`, `cms-adress`, `site-login`, `site-password`, `ftp-host`, `ftp-login`, `ftp-password`,`db-name`, `db-login`,`db-password`,`more-info`) VALUES ('site name', 'cms url', 'site login', 'site password', 'ftp url', 'ftp login', 'ftp password','db name', 'db login','db password','more info')";
- 
+* $query_CT = "CREATE TABLE `testDB`.`klients-projects` ( `id` INT NOT NULL AUTO_INCREMENT , `site-name` VARCHAR(255) , `cms-adress` VARCHAR(255) , `site-login` VARCHAR(255)  , `site-password` VARCHAR(255)  , `ftp-host` VARCHAR(255)  , `ftp-login` VARCHAR(255)  , `ftp-password` VARCHAR(255)  ,`db-name` VARCHAR(255), `db-login` VARCHAR(255) ,`db-password` VARCHAR(255) ,`more-info` TEXT NOT NULL ,`date-start` VARCHAR(255), `status` TINYINT(4), PRIMARY KEY (`id`)) ENGINE = InnoDB";
+* $query_II = "INSERT INTO `klients-projects`( `site-name`, `cms-adress`, `site-login`, `site-password`, `ftp-host`, `ftp-login`, `ftp-password`,`db-name`, `db-login`,`db-password`,`more-info`,`date-start`,`status`) VALUES ('site name', 'cms url', 'site login', 'site password', 'ftp url', 'ftp login', 'ftp password','db name', 'db login','db password','more info','05-11-2018','0')";
+ // status - 0 - значение по-умолчанию,  1 - проект активен, бекапы не делаются,   2 - проект активен, бекапы файлов в очереди, 3 - проект активен, бекапы файлов и базы в очереди, 
 $sth = $dbh->prepare($query);
 $sth->execute();
 */
 
 
-                                            
+// $query_II = "INSERT INTO `klients-projects`( `site-name`, `cms-adress`, `site-login`, `site-password`, `ftp-host`, `ftp-login`, `ftp-password`,`db-name`, `db-login`,`db-password`,`more-info`,`date-start`,`status`) VALUES ('site name', 'cms url', 'site login', 'site password', 'ftp url', 'ftp login', 'ftp password','db name', 'db login','db password','more info','05-11-2018','0')";
 // $sth = $dbh->prepare($query_II);
 // $sth->execute();
 // $data = $sth->fetchAll();
@@ -62,14 +62,14 @@ $sth->execute();
 if (strlen($_REQUEST["new-project-input"]) > 0  && strlen($_REQUEST["site-name"]) > 0 ){
     array_pop($_REQUEST);
     $str_values = implode("','",$_REQUEST);
-    $str_values = "'".$str_values."'";
+    $str_values = "'".$str_values."','".date("d-m-Y")."','0'";
     var_dump($str_values);
-    $query_create_new_project = "INSERT INTO `klients-projects`( `site-name`, `cms-adress`, `site-login`, `site-password`, `ftp-host`, `ftp-login`, `ftp-password`,`db-name`, `db-login`,`db-password`,`more-info`) VALUES ($str_values)";
+    $query_create_new_project = "INSERT INTO `klients-projects`( `site-name`, `cms-adress`, `site-login`, `site-password`, `ftp-host`, `ftp-login`, `ftp-password`,`db-name`, `db-login`,`db-password`,`more-info`,`date-start`,`status`) VALUES ($str_values)";
     $sth = $dbh->prepare($query_create_new_project);
     $sth->execute();    
 }
 echo "<pre>"; 
-print_r($_REQUEST);
+print_r($data);
 
 echo "</pre>";
 /******/

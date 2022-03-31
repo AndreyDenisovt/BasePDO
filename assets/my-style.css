@@ -2,3 +2,9 @@ main{
     background-color: antiquewhite;
     min-height: 100vh;
 }
+form.new-project-form{
+    display: none;
+}
+form.new-project-form.active{
+    display: block;
+}

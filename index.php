@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" href="assets/bootstrap-4/css/bootstrap.css">              			
     <link rel="stylesheet" type="text/css" href="assets/my-style.css">    
     <link rel="stylesheet" type="text/css" href="assets/fontawesome/css/all.css">    
-
     
     <script src="assets/js/jquery-3.6.0.min.js"></script>
     <script defer src="assets/js/my-script.js"></script>
@@ -151,11 +150,29 @@ echo "</pre>";
                         <input type="text" name="db_login" placeholder="db_login" value="">
                         <input type="text" name="db_password" placeholder="db_password" value="">
                         <textarea name="more_info"></textarea>
-                        <button type="submit" name="new_project_input" value="1" class="btn btn-info">Сохранить</button>
+                        <button type="submit" name="new_project_input" value="1" class="btn btn-info new-project-input">Сохранить</button>
                     </form>
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            
+            // $("form.new-project-form").on("submit",function(e){
+            //         e.eventPreventDefault;
+            //         data = $(this).serialise;
+            //         $.post({
+            //             url:"/index.php",
+            //             data:data,
+            //             success:function(){
+            //                 console.log("OK")
+            //             }
+            //         });
+            // });
+            console.log("JQ")
+        });
+        
+    </script>
     <hr>
     <?php if (strlen($_GET["details_row"]) > 0 ){?>
         <div class="container">

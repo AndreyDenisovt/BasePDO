@@ -18,8 +18,10 @@
 <body>
 
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+
+//phpinfo();
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 // setlocale(LC_ALL, 'ru_RU');
 // date_default_timezone_set('Europe/Moscow');
 // header('Content-type: text/html; charset=utf-8');
@@ -37,7 +39,7 @@
 	11	db_password	    varchar(255)	utf8_general_ci		Да	NULL		        Изменить	Удалить
 	12	more_info	    text	        utf8_general_ci		Нет	Нет		            Изменить	Удалить
 	13	date_start	    datetime			                Нет	CURRENT_TIMESTAMP	Изменить	Удалить	
-	14	status	        varchar(2)	utf8_general_ci		    Да	0	                Изменить	Удалить
+	14	status	        varchar(2)	    utf8_general_ci		Да	0	                Изменить	Удалить
 */
 
 $dsn = 'mysql:dbname=testDB;host=localhost;charset=utf8';
@@ -63,10 +65,10 @@ $show_names_pass = $show_all_names($dbh);
 
  
 if (strlen($_GET["delete_row"]) > 0 ){
-        $row_for_delete = $_GET["delete_row"];
-        $query_DT = "DELETE FROM klients_projects WHERE id= $row_for_delete";
-        $sth = $dbh->prepare($query_DT);
-        $sth->execute();   
+    $row_for_delete = $_GET["delete_row"];
+    $query_DT = "DELETE FROM klients_projects WHERE id= $row_for_delete";
+    $sth = $dbh->prepare($query_DT);
+    $sth->execute();   
          
 }
 
@@ -83,8 +85,6 @@ if (strlen($_GET["save_edit_row"]) > 0){
     array_pop($_GET);   // убираем save_edit_row
     $id = $_GET["id"];  
     array_shift($_GET); // убираем id
-
-    //$query_UT = "UPDATE testDB.klients_projects SET ftp_password = 'assword', db_login = 'db-log' WHERE id = 2";
     $query_UT = "UPDATE klients_projects SET site_name= :site_name, cms_adress=:cms_adress, site_login=:site_login, site_password=:site_password, ftp_host=:ftp_host, ftp_login=:ftp_login, ftp_password=:ftp_password, db_name=:db_name, db_login=:db_login,db_password=:db_password,more_info=:more_info, status=:status WHERE id= $id";
     $sth = $dbh->prepare($query_UT);
     foreach($_GET as $key=>$value){
@@ -95,7 +95,7 @@ if (strlen($_GET["save_edit_row"]) > 0){
         }
     }
     $sth->execute();
-
+    //print_r($_GET);
 
 }
 
@@ -117,9 +117,9 @@ if (strlen($_GET["new_project_input"]) > 0  && strlen($_GET["site_name"]) > 0 ){
     $sth = $dbh->prepare($query_create_new_project);
     $sth->execute();    
 }
-// echo "<pre>"; 
-// //var_dump($_GET);
-// echo "</pre>";
+echo "<pre>"; 
+//var_dump($_GET);
+echo "</pre>";
 /******/
 
 ?>

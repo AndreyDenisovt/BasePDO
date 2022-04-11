@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" href="assets/bootstrap-4/css/bootstrap.css">              			
     <link rel="stylesheet" type="text/css" href="assets/my-style.css">    
     <link rel="stylesheet" type="text/css" href="assets/fontawesome/css/all.css">    
-
     
     <script src="assets/js/jquery-3.6.0.min.js"></script>
     <script defer src="assets/js/my-script.js"></script>
@@ -20,12 +19,14 @@
 <?php
 
 //phpinfo();
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
+//  error_reporting(E_ALL);
+//  ini_set('display_errors', 1);
 // setlocale(LC_ALL, 'ru_RU');
 // date_default_timezone_set('Europe/Moscow');
 // header('Content-type: text/html; charset=utf-8');
-/*
+
+/* klients_projects
+
     1	id              int(11)			                    Нет	Нет	AUTO_INCREMENT	Изменить	Удалить
 	2	site_name	    varchar(255)	utf8_general_ci		Да	NULL		        Изменить	Удалить
 	3	cms_adress	    varchar(255)	utf8_general_ci		Да	NULL		        Изменить	Удалить
@@ -40,6 +41,13 @@
 	12	more_info	    text	        utf8_general_ci		Нет	Нет		            Изменить	Удалить
 	13	date_start	    datetime			                Нет	CURRENT_TIMESTAMP	Изменить	Удалить	
 	14	status	        varchar(2)	    utf8_general_ci		Да	0	                Изменить	Удалить
+*/
+/* users_logpas
+
+    1 	id  	    int 			                        Нет Нет AUTO_INCREMENT  Изменить    Удалить 
+    2 	login 	    varchar(255) 	utf8_general_ci 		Нет Нет 			    Изменить    Удалить 
+    3 	password 	varchar(255) 	utf8_general_ci 		Нет Нет 			    Изменить    Удалить 
+    4 	temp 	    int 			                        Нет	Нет                 Изменить    Удалить 	    
 */
 
 $dsn = 'mysql:dbname=testDB;host=localhost;charset=utf8';
@@ -82,9 +90,9 @@ if (strlen($_GET["details_row"]) > 0 ){
 
 if (strlen($_GET["save_edit_row"]) > 0){
 
-    array_pop($_GET);   // убираем save_edit_row
+    array_pop($_GET);   // убираем save_edit_row - последний элемент массива
     $id = $_GET["id"];  
-    array_shift($_GET); // убираем id
+    array_shift($_GET); // убираем id - первый элемент массива
     $query_UT = "UPDATE klients_projects SET site_name= :site_name, cms_adress=:cms_adress, site_login=:site_login, site_password=:site_password, ftp_host=:ftp_host, ftp_login=:ftp_login, ftp_password=:ftp_password, db_name=:db_name, db_login=:db_login,db_password=:db_password,more_info=:more_info, status=:status WHERE id= $id";
     $sth = $dbh->prepare($query_UT);
     foreach($_GET as $key=>$value){
@@ -121,8 +129,77 @@ echo "<pre>";
 //var_dump($_GET);
 echo "</pre>";
 /******/
+if (strlen($_GET["reg_new_user"]) > 0){
+    $user_login = $_GET["user_login"];
+    $user_pass = $_GET["user_pass"];
+    $query_CNU = "INSERT INTO users_logpas ( user_login, user_password ) VALUES ( :user_login, :user_pass)";
+    $sth = $dbh->prepare($query_CNU);
+    
+    // $sth->bindValue('user_pass', $user_pass);
+    // $sth->bindValue('user_login',$user_login);
+ 
+    // $sth->execute();  
+}
+
+if (strlen($_GET["user_login_enter"]) > 0 ){
+    //array_pop($_GET);
+    $login = $_GET["user_login"];
+    $pass = $_GET["user_pass"];
+    $query_FU = "SELECT * FROM users_logpas WHERE user_login= :user_login";
+    $sth = $dbh->prepare($query_FU);
+    $sth->bindValue('user_login',$login);
+    $sth->execute();
+    $current_user = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
+}
 
 ?>
+<header>
+  <div class="container">
+      <div class="row">
+          <div class="col-md-6">
+                <div class="user-name">
+                 Текущий пользователь: 
+                 <b>   
+                <?php
+                if ($current_user):
+                    echo $current_user['user_login']; ?>                    
+                <?php                 
+                else:?>
+                    Unknown
+                <?php endif;?>    
+                </b>
+                </div>
+          </div>
+          <div class="col-md-6">
+            <div class="login-form">
+            <div class="title">Log In:</div>            
+                <form action="">
+                    <input type="text" placeholder="Login" name="user_login">
+                    <input type="text" placeholder="Password" name="user_pass">
+                    <button type="submit" name="user_login_enter"  value="1">Enter -></button>
+                </form>
+            </div>
+          </div>          
+      </div>
+  </div>  
+
+  <div class="container bg-info">
+      <div class="row">
+      <div class="col-md-6">
+              <div class="register-form">
+              <div class="title">Register</div>
+                <form action="">
+                    <input type="text" placeholder="Login" name="user_login">
+                    <input type="text" placeholder="Password" name="user_pass">
+                    <button type="submit" name="reg_new_user" value="new_user">Reg</button>
+                </form>
+              </div>
+          </div>
+      </div>
+  </div>
+
+</header>
+<hr>
 <main>
  
     <div class="container">
@@ -151,11 +228,29 @@ echo "</pre>";
                         <input type="text" name="db_login" placeholder="db_login" value="">
                         <input type="text" name="db_password" placeholder="db_password" value="">
                         <textarea name="more_info"></textarea>
-                        <button type="submit" name="new_project_input" value="1" class="btn btn-info">Сохранить</button>
+                        <button type="submit" name="new_project_input" value="1" class="btn btn-info new-project-input">Сохранить</button>
                     </form>
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            
+            // $("form.new-project-form").on("submit",function(e){
+            //         e.eventPreventDefault;
+            //         data = $(this).serialise;
+            //         $.post({
+            //             url:"/index.php",
+            //             data:data,
+            //             success:function(){
+            //                 console.log("OK")
+            //             }
+            //         });
+            // });
+            console.log("JQ")
+        });
+        
+    </script>
     <hr>
     <?php if (strlen($_GET["details_row"]) > 0 ){?>
         <div class="container">

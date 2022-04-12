@@ -128,9 +128,11 @@ if (strlen($_GET["new_project_input"]) > 0  && strlen($_GET["site_name"]) > 0 ){
     $sth = $dbh->prepare($query_create_new_project);
     $sth->execute();    
 }
+ 
 echo "<pre>"; 
-var_dump($_GET);
+//var_dump($_GET);
 echo "</pre>";
+
 /******/
 if (strlen($_POST["reg_new_user"]) > 0){
     $user_login = $_POST["user_login"];

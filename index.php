@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,30 +129,32 @@ if (strlen($_GET["new_project_input"]) > 0  && strlen($_GET["site_name"]) > 0 ){
     $sth->execute();    
 }
 echo "<pre>"; 
-//var_dump($_GET);
+var_dump($_GET);
 echo "</pre>";
 /******/
-if (strlen($_GET["reg_new_user"]) > 0){
-    $user_login = $_GET["user_login"];
-    $user_pass = $_GET["user_pass"];
+if (strlen($_POST["reg_new_user"]) > 0){
+    $user_login = $_POST["user_login"];
+    $user_pass = md5($_POST["user_pass"]);
     $query_CNU = "INSERT INTO users_logpas ( user_login, user_password ) VALUES ( :user_login, :user_pass)";
-    $sth = $dbh->prepare($query_CNU);
-    
-    // $sth->bindValue('user_pass', $user_pass);
-    // $sth->bindValue('user_login',$user_login);
- 
-    // $sth->execute();  
+    $sth = $dbh->prepare($query_CNU);    
+    $sth->bindValue('user_pass', $user_pass);
+    $sth->bindValue('user_login',$user_login);
+    $sth->execute();  
 }
-
-if (strlen($_GET["user_login_enter"]) > 0 ){
-    //array_pop($_GET);
-    $login = $_GET["user_login"];
-    $pass = $_GET["user_pass"];
+$current_user_name = "Unknown";
+if (strlen($_POST["user_login_enter"]) > 0 ){
+    $login = $_POST["user_login"];
+    $pass = $_POST["user_pass"];
     $query_FU = "SELECT * FROM users_logpas WHERE user_login= :user_login";
     $sth = $dbh->prepare($query_FU);
     $sth->bindValue('user_login',$login);
-    $sth->execute();
+    $sth->execute();    
     $current_user = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
+    if (md5($pass) == $current_user["user_password"] ){
+        $current_user_name = $current_user['user_login'];
+    }else{
+        $current_user_name = "Unknown";
+    }
 }
 
 ?>
@@ -160,20 +165,16 @@ if (strlen($_GET["user_login_enter"]) > 0 ){
                 <div class="user-name">
                  Текущий пользователь: 
                  <b>   
-                <?php
-                if ($current_user):
-                    echo $current_user['user_login']; ?>                    
-                <?php                 
-                else:?>
-                    Unknown
-                <?php endif;?>    
+                <?php               
+                    echo $current_user_name; 
+                ?>            
                 </b>
                 </div>
           </div>
           <div class="col-md-6">
             <div class="login-form">
             <div class="title">Log In:</div>            
-                <form action="">
+                <form action="" method="post">
                     <input type="text" placeholder="Login" name="user_login">
                     <input type="text" placeholder="Password" name="user_pass">
                     <button type="submit" name="user_login_enter"  value="1">Enter -></button>
@@ -188,7 +189,7 @@ if (strlen($_GET["user_login_enter"]) > 0 ){
       <div class="col-md-6">
               <div class="register-form">
               <div class="title">Register</div>
-                <form action="">
+                <form action="" method="post">
                     <input type="text" placeholder="Login" name="user_login">
                     <input type="text" placeholder="Password" name="user_pass">
                     <button type="submit" name="reg_new_user" value="new_user">Reg</button>

@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+if (isset($_SESSION['user']) && $_SESSION['user']!= "Unknown"){
+     $current_user_name = $_COOKIE['user'];
+}else{
+    $current_user_name = "Unknown";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,8 +112,6 @@ if (strlen($_GET["save_edit_row"]) > 0){
         }
     }
     $sth->execute();
-    //print_r($_GET);
-
 }
 
 /* 
@@ -129,9 +133,7 @@ if (strlen($_GET["new_project_input"]) > 0  && strlen($_GET["site_name"]) > 0 ){
     $sth->execute();    
 }
  
-echo "<pre>"; 
-//var_dump($_GET);
-echo "</pre>";
+
 
 /******/
 if (strlen($_POST["reg_new_user"]) > 0){
@@ -143,7 +145,7 @@ if (strlen($_POST["reg_new_user"]) > 0){
     $sth->bindValue('user_login',$user_login);
     $sth->execute();  
 }
-$current_user_name = "Unknown";
+
 if (strlen($_POST["user_login_enter"]) > 0 ){
     $login = $_POST["user_login"];
     $pass = $_POST["user_pass"];
@@ -157,8 +159,18 @@ if (strlen($_POST["user_login_enter"]) > 0 ){
     }else{
         $current_user_name = "Unknown";
     }
+    $_SESSION["user"] = $current_user_name;
 }
 
+if(strlen($_POST["user_logout"]) > 0 ){
+    session_destroy();
+    header('Location: /');
+}
+
+
+echo "<pre>"; 
+//var_dump($_SESSION);
+echo "</pre>";
 ?>
 <header>
   <div class="container">
@@ -174,32 +186,44 @@ if (strlen($_POST["user_login_enter"]) > 0 ){
                 </div>
           </div>
           <div class="col-md-6">
+
+        <?php if ($current_user_name == false || $current_user_name == "Unknown"):?>
             <div class="login-form">
-            <div class="title">Log In:</div>            
-                <form action="" method="post">
-                    <input type="text" placeholder="Login" name="user_login">
-                    <input type="text" placeholder="Password" name="user_pass">
-                    <button type="submit" name="user_login_enter"  value="1">Enter -></button>
-                </form>
-            </div>
+                <div class="title">Log In:</div>            
+                    <form action="" method="post">
+                        <input type="text" placeholder="Login" name="user_login">
+                        <input type="text" placeholder="Password" name="user_pass">
+                        <button type="submit" name="user_login_enter"  value="1">Enter -></button>
+                    </form>
+                </div>
+          </div>
+        <?php else:?>
+          <div class="logout-form">
+              <form action="" method="post">
+                    <button type="submit" name="user_logout"  value="1">LogOut</button>
+              </form>
           </div>          
+        <?php endif;?>
+
       </div>
   </div>  
 
+<?php if ($current_user_name == false || $current_user_name == "Unknown"):?>
   <div class="container bg-info">
       <div class="row">
-      <div class="col-md-6">
-              <div class="register-form">
-              <div class="title">Register</div>
-                <form action="" method="post">
-                    <input type="text" placeholder="Login" name="user_login">
-                    <input type="text" placeholder="Password" name="user_pass">
-                    <button type="submit" name="reg_new_user" value="new_user">Reg</button>
-                </form>
-              </div>
-          </div>
-      </div>
+        <div class="col-md-6">
+                <div class="register-form">
+                <div class="title">Register</div>
+                    <form action="" method="post">
+                        <input type="text" placeholder="Login" name="user_login">
+                        <input type="text" placeholder="Password" name="user_pass">
+                        <button type="submit" name="reg_new_user" value="new_user">Reg</button>
+                    </form>
+                </div>
+            </div>
+        </div>
   </div>
+<?php endif;?>
 
 </header>
 <hr>

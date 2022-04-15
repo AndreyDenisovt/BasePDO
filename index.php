@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+if (isset($_SESSION['user']) && $_SESSION['user']!= "Unknown"){
+    $current_user_name = $_SESSION['user'];
+}else{
+    $current_user_name = "Unknown";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,6 +86,7 @@ if (strlen($_GET["delete_row"]) > 0 ){
     $query_DT = "DELETE FROM klients_projects WHERE id= $row_for_delete";
     $sth = $dbh->prepare($query_DT);
     $sth->execute();   
+    header("Location: /");
          
 }
 
@@ -106,8 +113,7 @@ if (strlen($_GET["save_edit_row"]) > 0){
         }
     }
     $sth->execute();
-    //print_r($_GET);
-
+    header("Location: /");
 }
 
 /* 
@@ -127,10 +133,8 @@ if (strlen($_GET["new_project_input"]) > 0  && strlen($_GET["site_name"]) > 0 ){
     $query_create_new_project = "INSERT INTO klients_projects( site_name, cms_adress, site_login, site_password, ftp_host, ftp_login, ftp_password, db_name, db_login,db_password,more_info) VALUES ($str_values)";
     $sth = $dbh->prepare($query_create_new_project);
     $sth->execute();    
+    header("Location: /");
 }
-echo "<pre>"; 
-var_dump($_GET);
-echo "</pre>";
 /******/
 if (strlen($_POST["reg_new_user"]) > 0){
     $user_login = $_POST["user_login"];
@@ -141,7 +145,7 @@ if (strlen($_POST["reg_new_user"]) > 0){
     $sth->bindValue('user_login',$user_login);
     $sth->execute();  
 }
-$current_user_name = "Unknown";
+
 if (strlen($_POST["user_login_enter"]) > 0 ){
     $login = $_POST["user_login"];
     $pass = $_POST["user_pass"];
@@ -155,8 +159,18 @@ if (strlen($_POST["user_login_enter"]) > 0 ){
     }else{
         $current_user_name = "Unknown";
     }
+    $_SESSION["user"] = $current_user_name;
 }
 
+if(strlen($_POST["user_logout"]) > 0 ){
+    session_destroy();
+    header('Location: /');
+}
+
+
+echo "<pre>"; 
+//var_dump($_SESSION);
+echo "</pre>";
 ?>
 <header>
   <div class="container">
@@ -172,89 +186,142 @@ if (strlen($_POST["user_login_enter"]) > 0 ){
                 </div>
           </div>
           <div class="col-md-6">
-            <div class="login-form">
-            <div class="title">Log In:</div>            
-                <form action="" method="post">
-                    <input type="text" placeholder="Login" name="user_login">
-                    <input type="text" placeholder="Password" name="user_pass">
-                    <button type="submit" name="user_login_enter"  value="1">Enter -></button>
-                </form>
-            </div>
+
+        <?php if ($current_user_name == false || $current_user_name == "Unknown"):?>
+            <div class="login-form">                        
+                    <form action="" method="post">
+                        <input type="text" placeholder="Login" name="user_login">
+                        <input type="text" placeholder="Password" name="user_pass">
+                        <button type="submit" name="user_login_enter" class="btn btn-info" value="1">Log In -></button>
+                    </form>
+                </div>
+          </div>
+        <?php else:?>
+          <div class="logout-form">
+              <form action="" method="post">
+                    <button type="submit" name="user_logout" class="btn btn-link" value="1">LogOut</button>
+              </form>
           </div>          
+        <?php endif;?>
+
       </div>
   </div>  
 
-  <div class="container bg-info">
+<?php /*if ($current_user_name == false || $current_user_name == "Unknown"):?>
+  <div class="container bg-warning">
       <div class="row">
-      <div class="col-md-6">
-              <div class="register-form">
-              <div class="title">Register</div>
-                <form action="" method="post">
-                    <input type="text" placeholder="Login" name="user_login">
-                    <input type="text" placeholder="Password" name="user_pass">
-                    <button type="submit" name="reg_new_user" value="new_user">Reg</button>
-                </form>
-              </div>
-          </div>
-      </div>
+        <div class="col-md-6">
+                <div class="register-form">                
+                    <form action="" method="post">
+                        <input type="text" placeholder="Login new user" name="user_login">
+                        <input type="text" placeholder="Password new user" name="user_pass">
+                        <button type="submit" name="reg_new_user" class="btn btn-info" value="new_user">Создать</button>
+                    </form>
+                </div>
+            </div>
+        </div>
   </div>
+<?php endif;*/?>
 
 </header>
-<hr>
-<main>
+
+<?php 
  
+if ($current_user_name == false || $current_user_name == "Unknown"):?> 
+
+<main>
+<hr>
     <div class="container">
         <div class="row">
-            <div class="col-md-12 m-2">
+            <div class="col-md-12">
                 <div class="d-flex justify-content-center h2">
                     <a href="/">SYStem<i class="fas fa-key"></i>KEYs</a>
                 </div>
             </div>
         </div>
     </div>
+<hr>
+<div class="h1 text-center">
+    Требуется войти в учетную запись 
+</div>
+<?php else:?>
+    <main>
+    <hr>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="d-flex justify-content-center h2">
+                        <a href="/">SYStem<i class="fas fa-key"></i>KEYs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     <hr>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="btn btn-success new-project-btn">Создать новый проект</div>
-                    <form class="new-project-form active" action="">                        
-                        <input type="text" name="site_name" placeholder="site_name" value="">
-                        <input type="text" name="cms_adress" placeholder="cms_adress" value="">
-                        <input type="text" name="site_login" placeholder="site_login" value="">
-                        <input type="text" name="site_password" placeholder="site_password" value="">
-                        <input type="text" name="ftp_host" placeholder="ftp_host" value="">
-                        <input type="text" name="ftp_login" placeholder="ftp_login" value="">
-                        <input type="text" name="ftp_password" placeholder="ftp_password" value="">
-                        <input type="text" name="db_name" placeholder="db_name" value="">
-                        <input type="text" name="db_login" placeholder="db_login" value="">
-                        <input type="text" name="db_password" placeholder="db_password" value="">
-                        <textarea name="more_info"></textarea>
-                        <button type="submit" name="new_project_input" value="1" class="btn btn-info new-project-input">Сохранить</button>
+                <div class="btn btn-success new-project-btn mt-2">Создать новый проект</div>
+                    <form class="new-project-form mt-3 mb-3 pt-2 pb-2" action="">   
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="text" name="site_name" class="form-control mt-1"  placeholder="site_name*" value="">
+                                </div>                     
+                                <div class="col-md-4">
+                                    <input type="text" name="cms_adress" class="form-control mt-1" placeholder="cms_adress" value="">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="site_login" class="form-control mt-1" placeholder="site_login" value="">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="site_password" class="form-control mt-1" placeholder="site_password" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container mt-1">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="text" name="ftp_host" class="form-control mt-1" placeholder="ftp_host" value="">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="ftp_login" class="form-control mt-1" placeholder="ftp_login" value="">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="ftp_password" class="form-control mt-1" placeholder="ftp_password" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container mt-1">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="text" name="db_name" class="form-control mt-1" placeholder="db_name" value="">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="db_login" class="form-control mt-1" placeholder="db_login" value="">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="db_password" class="form-control mt-1" placeholder="db_password" value="">
+                                </div>
+                            </div>
+                        </div>         
+                        <div class="container mt-1">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <textarea name="more_info" class="form-control mt-1" placeholder="other info"></textarea>
+                                </div>
+                                <div class="col-md-2 d-flex justify-content-end">
+                                    <button type="submit" name="new_project_input" value="1" class="btn btn-info new-project-input align-self-end">Сохранить</button>
+                                </div>
+                            </div>
+                        </div> 
                     </form>
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            
-            // $("form.new-project-form").on("submit",function(e){
-            //         e.eventPreventDefault;
-            //         data = $(this).serialise;
-            //         $.post({
-            //             url:"/index.php",
-            //             data:data,
-            //             success:function(){
-            //                 console.log("OK")
-            //             }
-            //         });
-            // });
-            console.log("JQ")
-        });
-        
-    </script>
+ 
     <hr>
     <?php if (strlen($_GET["details_row"]) > 0 ){?>
-        <div class="container">
+        <div class="container mt-3 mb-3">
             <div class="row">
                 <div class="col-md-12 bg-warning p-2">
                     <div class="h1 text-center">Редактирование записи <b><?php echo $details_row[0]["site_name"];?></b></div>
@@ -288,75 +355,93 @@ if (strlen($_POST["user_login_enter"]) > 0 ){
             </div>
         </div>
      <?php }?>   
-<div class="container">
-    <div class="row">
-        <div class="col-md-3 bg-light d-flex align-items-center flex-column">
-            <?php
-                foreach($show_names_pass as $name){                    
-                    echo "<div class='m-1 p-1'>".$name["site_name"]."</div>";
-                }
-            ?>
-        </div>     
-    <?php
-    if ($show_names_pass > 0){       
-    ?>
-        <div class="col-md-9">
-            <table class="table table-striped table-bordered text-center">
-                <tr>
+    
+     <div class="container">
+        <div class="row">
+            <div class="col-md-3 bg-light d-flex align-items-center flex-column">
+                <input type="search" class="mt-2 mb-2 form-control" disabled placeholder="Поиск проекта" title="временно недоступно">
                 <?php
-                    foreach($show_names_pass[0] as $k=>$v):?>
-                    <?php if($k == "id"){continue;}?>
-                        <th>
-                            <?php                           
-                            echo $k;
-                            ?>
-                        </th>            
-                <?php
-                    endforeach;?>
-                    <th></th>
-                </tr>
-                
-                <?php
-                foreach($show_names_pass as $array){?>
-                <tr>
-                <?php 
-                    foreach($array as $name_column=>$value){
-                        if($name_column == "id"){continue;}
-                        ?>       
-                    <td>
-                        <?php                           
-                            echo $value;
-                        ?>
-                    </td>
-            
-                    <?php
+                    foreach($show_names_pass as $name){                    
+                        echo "<div class='m-1 p-1'>".$name["site_name"]."</div>";
                     }
-                    ?>
-                    <td class="ctrl-btns">
-                        <form action="">
-                            <button class="btn btn-light" name="details_row" value="<?php echo $array["id"] ?>" type="submit">                                
-                                <i class="far fa-arrow-alt-circle-right text-success"></i>
-                            </button>                        
-                        </form>
-                        <form class="d-none" action="">
-                            <button class="btn btn-light" name="delete_row" value="<?php echo $array["id"] ?>" type="submit">
-                                <i class="far fa-trash-alt text-danger"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                <?php                
-                }
-                ?>          
-            </table>
-        </div>
+                ?>
+            </div>     
         <?php
-        }
+        if ($show_names_pass > 0){       
         ?>
+            <div class="col-md-9">
+                <table class="table table-striped table-hover table-bordered bg-light text-center">
+                    <tr>
+                    <?php
+                        foreach($show_names_pass[0] as $k=>$v):?>
+                        <?php if($k == "id"){continue;}?>
+                            <th>
+                                <?php                           
+                                echo $k;
+                                ?>
+                            </th>            
+                    <?php
+                        endforeach;?>
+                        <th></th>
+                    </tr>
+                    
+                    <?php
+                    foreach($show_names_pass as $key=>$array){?>
+                    <tr>
+                    <?php 
+                        foreach($array as $name_column=>$value){                        
+                            if($name_column == "id"){continue;}
+                            ?>       
+                        <td>
+                            <?php                           
+                                echo $value;
+                            ?>
+                        </td>
+                
+                        <?php
+                        }
+                        ?>
+                        <td class="ctrl-btns">
+                            <div class="btns-options d-flex" data-rowid="<?php echo $key; ?>">
+                                <form class="details-row" action="">
+                                    <button class="btn btn-light " name="details_row" value="<?php echo $array["id"] ?>" type="submit">                                
+                                        <i class="far fa-arrow-alt-circle-right text-success"></i>
+                                    </button>                        
+                                </form>
+                                <form class="form-delete-row" action="">
+                                    <div class="btn btn-light btn-delete-row" data-rowid="<?php echo $key; ?>">
+                                        <i class="far fa-trash-alt text-danger"></i>                                    
+                                    </div>                            
+                                    <button class="btn btn-light confirm-btn-delete-row" name="delete_row" value="<?php echo $array["id"] ?>" type="submit">
+                                        <i class="far fa-check-square border-danger text-success"></i>
+                                    </button>
+                                </form>
+                            </div>                           
+                        </td>
+                    </tr>
+                    <?php                
+                    }
+                    ?>          
+                </table>
+            </div>
+            <?php
+            }
+            ?>
+        </div>
     </div>
-</div>
-
+<?php endif;?>
 </main>
 
+
+<footer>
+<div class="container">
+<div class="row">
+    <div class="col-md-3">
+        <i class="fab fa-github"></i>     
+        <a href="https://github.com/AndreyDenisovt/BasePDO" target="_blank">AndreyDenisovt</a>    
+    </div>
+</div>
+</div>
+</footer>
 </body>
 </html>

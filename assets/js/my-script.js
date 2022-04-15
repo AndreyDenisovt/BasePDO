@@ -1,18 +1,24 @@
 
-const new_project_btn = document.querySelector(".new-project-btn");
-const new_project_form = document.querySelector("form.new-project-form");
+$(document).ready(function(){
+    console.log("js");
 
+    $(".new-project-btn").on("click",function () {
+        $(".new-project-form").slideToggle();
+    })
 
-new_project_btn.addEventListener("click",function() {
+    $(".btns-options").on({
+        "mouseenter": function(){
+            $(".btn-delete-row").eq($(this).data("rowid")).show("slow");
+        },
+        "mouseleave": function (){
+            $(".btn-delete-row").eq($(this).data("rowid")).hide("fast");
+            $(".confirm-btn-delete-row").eq($(this).data("rowid")).hide("fast");
+        }    
+    });
 
-    if(!new_project_btn.classList.contains("active")){
-        new_project_btn.classList.add("active");
-        new_project_form.classList.add("active");    
-    }else{
-        new_project_btn.classList.remove("active");
-        new_project_form.classList.remove("active");
-    }
-    
+    $(".btn-delete-row").on("click",function(){       
+        $(".confirm-btn-delete-row").eq($(this).data("rowid")).show("slow");
+    });
+
 });
 
-console.log("js");

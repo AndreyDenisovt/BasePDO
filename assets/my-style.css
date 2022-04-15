@@ -8,3 +8,18 @@ form.new-project-form{
 form.new-project-form.active{
     display: block;
 }
+.btns-options{
+    width: 85px;
+}
+.btn-delete-row,.confirm-btn-delete-row{
+    display: none;
+}
+.confirm-btn-delete-row{
+    position: absolute;
+    right: -40px;
+    top: 0px;
+    box-shadow: red 0px 0px 5px;
+}
+form.form-delete-row{
+    position: relative;
+}

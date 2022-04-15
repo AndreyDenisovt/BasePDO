@@ -6,9 +6,6 @@ $(document).ready(function(){
         $(".new-project-form").slideToggle();
     })
 
-<<<<<<< HEAD
-new_project_btn.addEventListener("click",function() { // TODO: убрать класс "active" в верстке формы 
-=======
     $(".btns-options").on({
         "mouseenter": function(){
             $(".btn-delete-row").eq($(this).data("rowid")).show("slow");
@@ -22,7 +19,5 @@ new_project_btn.addEventListener("click",function() { // TODO: убрать кл
     $(".btn-delete-row").on("click",function(){       
         $(".confirm-btn-delete-row").eq($(this).data("rowid")).show("slow");
     });
->>>>>>> origin/001-w
-
 });
 
